@@ -1,7 +1,6 @@
 import React from "react";
 
 const Weather = ({ weatherData }) => {
-	console.log(weatherData);
 	const iconCode = weatherData.weather ? weatherData.weather[0].icon : null;
 	const iconUrl = iconCode
 		? `https://openweathermap.org/img/wn/${iconCode}@2x.png`
