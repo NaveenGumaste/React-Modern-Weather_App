@@ -115,7 +115,7 @@ function App() {
 					<input
 						type="text"
 						className="py-3 px-6 w-full max-w-[700px] text-lg rounded-full border border-slate-300 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-white shadow-md transition-all duration-300 ease-in-out"
-						placeholder="Enter location and press Enter"
+						placeholder="Enter location"
 						value={location}
 						onChange={(event) => setLocation(event.target.value)}
 						onKeyDownCapture={searchLocation}
