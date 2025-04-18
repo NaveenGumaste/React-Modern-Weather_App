@@ -11,21 +11,28 @@ function App() {
 
 	// Read API key from environment variable
 	const API_KEY = import.meta.env.VITE_OPENWEATHERMAP_API_KEY;
-	const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${API_KEY}`;
 
-	const searchLocation = (event) => {
+	// Refactored search function
+	const fetchWeatherData = () => {
+		if (!location) return; // Don't search if location is empty
+		const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${API_KEY}`;
+		axios
+			.get(url)
+			.then((response) => {
+				setdata(response.data);
+				console.log(response.data);
+			})
+			.catch((error) => {
+				console.error("Error fetching weather data:", error);
+				// Optionally: Set an error state here
+			});
+		setLocation(""); // Clear input after search
+	};
+
+	// Handle Enter key press in input
+	const handleKeyDown = (event) => {
 		if (event.key === "Enter") {
-			axios
-				.get(url)
-				.then((response) => {
-					setdata(response.data);
-					console.log(response.data);
-				})
-				.catch((error) => {
-					console.error("Error fetching weather data:", error);
-					// Optionally: Set an error state here to display a message to the user
-				});
-			setLocation("");
+			fetchWeatherData();
 		}
 	};
 
@@ -38,7 +45,9 @@ function App() {
 	const particlesLoaded = useCallback(async (container) => {}, []);
 
 	return (
-		<div className="w-full min-h-screen relative p-4 overflow-hidden">
+		<div className="w-full min-h-screen relative p-2 sm:p-4 overflow-hidden">
+			{" "}
+			{/* Adjusted padding for small screens */}
 			{/* Particles Background */}
 			<Particles
 				id="tsparticles"
@@ -108,18 +117,24 @@ function App() {
 					zIndex: -1,
 				}}
 			/>
-
 			{/* Content */}
 			<div className="relative z-10">
-				<div className="text-center mb-8">
+				<div className="text-center mb-6 sm:mb-8 flex justify-center items-center gap-2">
+					{" "}
+					{/* Use flexbox for input and button */}
 					<input
 						type="text"
-						className="py-3 px-6 w-full max-w-[700px] text-lg rounded-full border border-slate-300 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-white shadow-md transition-all duration-300 ease-in-out"
-						placeholder="Enter location"
+						className="py-2 px-4 sm:py-3 sm:px-6 w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl text-base sm:text-lg rounded-full border border-slate-300 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-white shadow-md transition-all duration-300 ease-in-out" /* Adjusted max-width slightly */
+						placeholder="Enter location" // Updated placeholder
 						value={location}
 						onChange={(event) => setLocation(event.target.value)}
-						onKeyDownCapture={searchLocation}
+						onKeyDown={handleKeyDown} // Changed to onKeyDown
 					/>
+					<button
+						onClick={fetchWeatherData} // Call fetchWeatherData on click
+						className="py-2 px-4 sm:py-3 sm:px-5 text-base sm:text-lg rounded-full bg-rose-500 text-white hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 shadow-md transition-colors duration-300 ease-in-out">
+						Search
+					</button>
 				</div>
 				<Weather weatherData={data} />
 			</div>
